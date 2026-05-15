@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#060e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="InfuCalc – Kalkulator Pompa Infus, Holliday-Segar, dan Target Waktu Infus">
+  <title>InfuCalc — Kalkulator Infus Klinis</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23060e1e'/%3E%3Crect x='14.5' y='2' width='3' height='4' rx='1.5' fill='%2338bdf8'/%3E%3Crect x='13' y='5.5' width='6' height='14' rx='2' fill='none' stroke='%2338bdf8' stroke-width='1.5'/%3E%3Crect x='14.5' y='5.5' width='3' height='9' rx='1' fill='%2338bdf8' opacity='0.3'/%3E%3Crect x='13' y='11' width='6' height='1.2' fill='%2338bdf8' opacity='0.5'/%3E%3Crect x='13' y='13.5' width='6' height='1.2' fill='%2338bdf8' opacity='0.5'/%3E%3Cpath d='M15.5 19.5 L15.5 21.5 L13 24 L11 26 L13 28 L15.5 25.5 L18.5 25.5 L18.5 19.5Z' fill='%2338bdf8' opacity='0.8'/%3E%3C/svg%3E">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: {
+        sans: ['DM Sans','system-ui','sans-serif'],
+        mono: ['DM Mono','ui-monospace','monospace']
+      }}}
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg:         #060e1e;
+      --surf:       rgba(15,31,61,0.78);
+      --surf2:      rgba(30,58,95,0.38);
+      --bd:         rgba(56,189,248,0.10);
+      --cyan:       #38bdf8;
+      --cyan-d:     rgba(56,189,248,0.55);
+      --em:         #10b981;
+      --amb:        #f59e0b;
+      --ind:        #818cf8;
+      --vio:        #a78bfa;
+      --rose:       #fb7185;
+      --tp:         #f1f5f9;
+      --ts:         #94a3b8;
+      --tm:         rgba(148,163,184,0.50);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 70% 50% at 15% 15%, rgba(56,189,248,.055) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 85%, rgba(99,102,241,.055) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 30% at 50% 50%, rgba(16,185,129,.03) 0%, transparent 70%);
+      min-height: 100dvh;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      color: var(--tp);
+      overflow-x: hidden;
+    }
+
+    /* cards */
+    .card {
+      background: var(--surf);
+      border: 1px solid var(--bd);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 1.125rem;
+    }
+
+    /* inputs */
+    .inp {
+      background: rgba(4,10,22,.88);
+      border: 1.5px solid rgba(56,189,248,.18);
+      color: var(--tp);
+      border-radius: .75rem;
+      padding: .72rem .9rem;
+      font-size: .875rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      width: 100%;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .inp:focus {
+      border-color: rgba(56,189,248,.65);
+      box-shadow: 0 0 0 3px rgba(56,189,248,.12), 0 0 16px rgba(56,189,248,.07);
+    }
+    .inp::placeholder { color: rgba(148,163,184,.32); }
+    select.inp {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2338bdf8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .65rem center;
+      background-size: 1.2rem;
+      padding-right: 2.2rem;
+      cursor: pointer;
+    }
+    select.inp option { background: #0a1628; color: var(--tp); }
+    .sfx {
+      position: absolute; right: .75rem; top: 50%; transform: translateY(-50%);
+      font-size: .68rem; font-weight: 600; color: var(--cyan-d);
+      pointer-events: none; font-family: 'DM Mono', monospace;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* output themes */
+    .oc-g  { background: linear-gradient(135deg,rgba(5,150,105,.14),rgba(16,185,129,.07)); border:1.5px solid rgba(16,185,129,.28); border-radius:1.125rem; }
+    .om-g  { background: linear-gradient(135deg,rgba(16,185,129,.22),rgba(5,150,105,.12)); border:1.5px solid rgba(16,185,129,.38); border-radius:.875rem; }
+    .oc-v  { background: linear-gradient(135deg,rgba(109,40,217,.14),rgba(167,139,250,.07)); border:1.5px solid rgba(167,139,250,.28); border-radius:1.125rem; }
+    .om-v  { background: linear-gradient(135deg,rgba(167,139,250,.22),rgba(109,40,217,.12)); border:1.5px solid rgba(167,139,250,.38); border-radius:.875rem; }
+    .oc-r  { background: linear-gradient(135deg,rgba(190,18,60,.14),rgba(251,113,133,.07)); border:1.5px solid rgba(251,113,133,.28); border-radius:1.125rem; }
+    .om-r  { background: linear-gradient(135deg,rgba(251,113,133,.22),rgba(190,18,60,.12)); border:1.5px solid rgba(251,113,133,.38); border-radius:.875rem; }
+    .os-c  { background:rgba(8,20,45,.7); border:1px solid rgba(56,189,248,.12); border-radius:.75rem; }
+    .os-i  { background:rgba(8,20,45,.7); border:1px solid rgba(129,140,248,.18); border-radius:.75rem; }
+
+    /* numeric pop */
+    .num { font-family:'DM Mono',ui-monospace,monospace; font-weight:500; letter-spacing:-.02em; }
+    .num.pop { animation:pop .35s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes pop {
+      0%   { opacity:.4; transform:scale(.93) translateY(4px); }
+      60%  { transform:scale(1.04) translateY(-1px); }
+      100% { opacity:1; transform:scale(1) translateY(0); }
+    }
+
+    /* label */
+    .lbl { font-size:.6rem; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--tm); }
+
+    /* badges */
+    .bw  { background:rgba(245,158,11,.12);  border:1px solid rgba(245,158,11,.28);  border-radius:.625rem; }
+    .be  { background:rgba(248,113,113,.10); border:1px solid rgba(248,113,113,.25); border-radius:.875rem; }
+    .bi  { background:rgba(56,189,248,.08);  border:1px solid rgba(56,189,248,.18);  border-radius:.625rem; }
+    .bn  { background:rgba(30,58,95,.4);     border:1px solid rgba(56,189,248,.08);  border-radius:.875rem; }
+    .bv  { background:rgba(139,92,246,.10);  border:1px solid rgba(167,139,250,.22); border-radius:.625rem; }
+    .br  { background:rgba(225,29,72,.10);   border:1px solid rgba(251,113,133,.22); border-radius:.625rem; }
+
+    /* pulse */
+    .pulse { width:7px; height:7px; border-radius:50%; animation:pls 2.2s infinite; }
+    @keyframes pls  { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{opacity:.5;box-shadow:0 0 0 4px rgba(16,185,129,0)} }
+    .pv { animation:plsv 2.2s infinite; }
+    @keyframes plsv { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(167,139,250,.5)}50%{opacity:.5;box-shadow:0 0 0 4px rgba(167,139,250,0)} }
+    .pr { animation:plsr 2.2s infinite; }
+    @keyframes plsr { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(251,113,133,.5)}50%{opacity:.5;box-shadow:0 0 0 4px rgba(251,113,133,0)} }
+
+    /* fade */
+    .fade { opacity:0; transform:translateY(6px); transition:opacity .3s,transform .3s; }
+    .fade.on { opacity:1; transform:translateY(0); }
+
+    /* separator */
+    .sep { height:1px; background:linear-gradient(90deg,transparent,rgba(56,189,248,.14),transparent); }
+
+    /* scrollbar */
+    ::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:rgba(56,189,248,.25);border-radius:2px}
+
+    /* header */
+    .hdr { background:rgba(6,14,30,.92); border-bottom:1px solid var(--bd); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
+
+    /* tab bar */
+    .tabbar { background:rgba(6,14,30,.94); border-bottom:1px solid rgba(56,189,248,.07); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
+    .tbtn {
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+      padding:.55rem .2rem .45rem; cursor:pointer; position:relative;
+      border:none; background:transparent; color:rgba(148,163,184,.5);
+      font-family:'DM Sans',sans-serif; transition:background .15s;
+    }
+    .tbtn:active { background:rgba(56,189,248,.05); }
+    .tbtn .ti  { font-size:1.05rem; line-height:1; transition:transform .2s; }
+    .tbtn .tl  { font-size:.57rem; font-weight:600; letter-spacing:.04em; }
+    .tbtn .tul { position:absolute; bottom:0; left:18%; right:18%; height:2px; border-radius:1px; opacity:0; transition:opacity .2s; }
+    .tbtn.a0 { color:#38bdf8; } .tbtn.a0 .tul { opacity:1; background:#38bdf8; }
+    .tbtn.a1 { color:#a78bfa; } .tbtn.a1 .tul { opacity:1; background:#a78bfa; }
+    .tbtn.a2 { color:#fb7185; } .tbtn.a2 .tul { opacity:1; background:#fb7185; }
+
+    /* panels */
+    .panel { display:none; }
+    .panel.on { display:block; }
+
+    /* holliday rows */
+    .hrow { display:flex; align-items:center; justify-content:space-between; padding:.42rem .7rem; border-radius:.5rem; }
+    .hrow:nth-child(odd) { background:rgba(139,92,246,.07); }
+
+    /* quick buttons */
+    .qbtn {
+      font-size:.68rem; font-weight:600; padding:.3rem .75rem;
+      border-radius:.6rem; cursor:pointer; transition:all .15s;
+      font-family:'DM Sans',sans-serif;
+    }
+    .qbtn-r { background:rgba(251,113,133,.10); border:1px solid rgba(251,113,133,.22); color:#fda4af; }
+    .qbtn-r:hover { background:rgba(251,113,133,.2); }
+    .qbtn-c { background:rgba(56,189,248,.08); border:1px solid rgba(56,189,248,.18); color:#7dd3fc; }
+    .qbtn-c:hover { background:rgba(56,189,248,.16); }
+    .qbtn.active-q { box-shadow:0 0 0 2px currentColor; }
+
+    /* reset btn */
+    .brst {
+      background:rgba(248,113,113,.10); border:1px solid rgba(248,113,113,.22);
+      color:#fca5a5; border-radius:.625rem; padding:.32rem .8rem;
+      font-size:.7rem; font-weight:600; cursor:pointer;
+      transition:background .18s; font-family:'DM Sans',sans-serif;
+    }
+    .brst:hover { background:rgba(248,113,113,.18); }
+
+    /* footer */
+    .ftcard { background:rgba(8,15,30,.6); border:1px solid rgba(245,158,11,.13); border-radius:.875rem; }
+  </style>
+</head>
+
+<body class="pb-10">
+
+<!-- ═══════ HEADER ═══════ -->
+<header class="hdr sticky top-0 z-50 px-4 py-3">
+  <div class="max-w-md mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 flex-shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white" width="18" height="18">
+          <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="font-bold text-white text-[1.05rem] leading-none tracking-tight">InfuCalc</h1>
+        <p class="text-[.64rem] text-cyan-400/70 font-medium mt-0.5">Kalkulator Infus Klinis</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 bi px-2.5 py-1">
+        <div class="pulse bg-emerald-400"></div>
+        <span class="text-[.62rem] text-emerald-300 font-bold tracking-wide">LIVE</span>
+      </div>
+      <button class="brst" id="gReset">Reset</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ TAB BAR ═══════ -->
+<nav class="tabbar sticky top-[60px] z-40">
+  <div class="max-w-md mx-auto flex">
+    <button class="tbtn a0" id="tb0" onclick="goTab(0)">
+      <span class="ti">💉</span><span class="tl">Pompa Infus</span><span class="tul"></span>
+    </button>
+    <button class="tbtn" id="tb1" onclick="goTab(1)">
+      <span class="ti">👶</span><span class="tl">Holliday-Segar</span><span class="tul"></span>
+    </button>
+    <button class="tbtn" id="tb2" onclick="goTab(2)">
+      <span class="ti">⏱️</span><span class="tl">Target Waktu</span><span class="tul"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════ CONTENT ═══════ -->
+<main class="max-w-md mx-auto px-4 pt-4">
+
+  <!-- ▓▓▓▓▓▓ PANEL 0 — POMPA INFUS ▓▓▓▓▓▓ -->
+  <div id="p0" class="panel on space-y-3.5">
+
+    <!-- Preset -->
+    <div class="card p-4">
+      <p class="lbl mb-2.5">Preset Obat Emergency / ICU</p>
+      <select id="presetSel" class="inp">
+        <option value="">— Pilih Preset Obat (Opsional) —</option>
+      </select>
+      <div id="pInfo" class="hidden mt-3 bw px-3 py-2.5 flex items-start gap-2.5">
+        <svg class="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 3.5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0V5.25A.75.75 0 018 4.5zM8 11a1 1 0 110-2 1 1 0 010 2z"/>
+        </svg>
+        <div class="flex-1 min-w-0">
+          <p class="text-[.68rem] text-amber-300 font-semibold mb-0.5">Rentang Dosis Lazim</p>
+          <p id="pRange" class="text-[.68rem] text-amber-200 font-mono font-medium"></p>
+          <p id="pNote"  class="text-[.63rem] text-amber-200/60 mt-0.5"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dilusi -->
+    <div class="card p-4">
+      <p class="lbl mb-3">Dilusi / Persiapan Syringe</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">Jumlah Obat</label>
+          <div class="relative">
+            <input type="number" id="drugMg" class="inp" style="padding-right:2.3rem" placeholder="misal: 4" min="0" step="any" inputmode="decimal">
+            <span class="sfx">mg</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">Total Volume</label>
+          <div class="relative">
+            <input type="number" id="volMl" class="inp" style="padding-right:2.3rem" placeholder="misal: 50" min="0" step="any" inputmode="decimal">
+            <span class="sfx">mL</span>
+          </div>
+        </div>
+      </div>
+      <div id="concBox" class="hidden mt-3 bi px-3 py-2 flex items-center justify-between">
+        <span class="text-[.66rem] text-slate-400 font-medium">Konsentrasi larutan</span>
+        <span id="concTxt" class="text-[.68rem] font-mono text-cyan-300 font-medium"></span>
+      </div>
+    </div>
+
+    <!-- Dose & Weight -->
+    <div class="card p-4">
+      <p class="lbl mb-3">Parameter Dosis</p>
+      <div id="wtRow" class="mb-3 hidden">
+        <label class="block text-xs text-slate-400 mb-1.5 font-medium">Berat Badan Pasien <span class="text-cyan-400/70">*</span></label>
+        <div class="relative">
+          <input type="number" id="wtInp" class="inp" style="padding-right:2.2rem" placeholder="misal: 60" min="1" max="350" step="0.1" inputmode="decimal">
+          <span class="sfx">kg</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">Target Dosis</label>
+          <input type="number" id="doseInp" class="inp" placeholder="misal: 0.1" min="0" step="any" inputmode="decimal">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">Satuan Dosis</label>
+          <select id="doseUnit" class="inp">
+            <option value="mcg/kg/menit">mcg/kg/menit</option>
+            <option value="mcg/kg/jam">mcg/kg/jam</option>
+            <option value="mcg/menit">mcg/menit</option>
+            <option value="mcg/jam">mcg/jam</option>
+            <option value="mg/jam">mg/jam</option>
+            <option value="mg/kg/jam">mg/kg/jam</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results 0 -->
+    <div>
+      <div id="r0w" class="fade on bn p-5 flex flex-col items-center text-center gap-2.5">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.12)">
+          <svg class="w-5 h-5" style="color:rgba(148,163,184,.4)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <p class="text-xs text-slate-500 font-medium">Lengkapi parameter di atas<br>untuk melihat hasil kalkulasi</p>
+      </div>
+      <div id="r0e" class="fade be p-4 hidden flex items-start gap-3">
+        <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center" style="background:rgba(248,113,113,.15)">
+          <svg class="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        </div>
+        <p id="r0em" class="text-sm text-red-300 leading-relaxed font-medium"></p>
+      </div>
+      <div id="r0r" class="fade oc-g p-4 space-y-3 hidden">
+        <div class="flex items-center justify-between">
+          <p class="lbl">Hasil Kalkulasi</p>
+          <div class="flex items-center gap-1.5"><div class="pulse bg-emerald-400"></div><span class="text-[.62rem] text-emerald-400/75 font-bold tracking-wide">REAL-TIME</span></div>
+        </div>
+        <div class="om-g p-4 text-center">
+          <p class="text-[.62rem] text-emerald-300/60 font-bold tracking-widest uppercase mb-1.5">Kecepatan Pompa Infus</p>
+          <div class="flex items-baseline justify-center gap-2">
+            <span id="v0r" class="num text-[2.8rem] font-bold text-emerald-400 leading-none">—</span>
+            <div class="flex flex-col items-start"><span class="text-emerald-300/80 font-bold text-lg leading-tight">mL</span><span class="text-emerald-300/55 font-medium text-xs">/jam</span></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div class="os-c p-3 text-center">
+            <p class="text-[.6rem] text-slate-400 font-bold mb-0.5">MAKRO SET</p>
+            <p class="text-[.56rem] text-cyan-400/45 font-mono mb-1.5">20 gtt/mL</p>
+            <div class="flex items-baseline justify-center gap-1"><span id="v0m" class="num text-2xl font-bold text-cyan-400 leading-none">—</span><span class="text-[.63rem] text-cyan-300/60 font-medium">tpm</span></div>
+          </div>
+          <div class="os-i p-3 text-center">
+            <p class="text-[.6rem] text-slate-400 font-bold mb-0.5">MIKRO SET</p>
+            <p class="text-[.56rem] text-indigo-400/45 font-mono mb-1.5">60 gtt/mL</p>
+            <div class="flex items-baseline justify-center gap-1"><span id="v0mi" class="num text-2xl font-bold text-indigo-400 leading-none">—</span><span class="text-[.63rem] text-indigo-300/60 font-medium">tpm</span></div>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div class="bi px-3 py-2.5 space-y-1"><p class="lbl mb-1">Ringkasan</p><div id="s0"></div></div>
+      </div>
+    </div>
+
+    <div class="ftcard px-4 py-3 flex items-start gap-2.5 mt-3.5">
+      <svg class="w-3.5 h-3.5 text-amber-400/60 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+      <p class="text-[.67rem] text-slate-400/70 leading-relaxed"><strong class="text-amber-400/75 font-semibold">Disclaimer:</strong> Alat bantu hitung digital. Verifikasi manual sesuai protokol klinis tetap menjadi tanggung jawab klinisi.</p>
+    </div>
+    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · IGD / ICU Syringe &amp; Infusion Pump Calculator</p>
+
+  </div><!-- /p0 -->
+
+
+  <!-- ▓▓▓▓▓▓ PANEL 1 — HOLLIDAY-SEGAR ▓▓▓▓▓▓ -->
+  <div id="p1" class="panel space-y-3.5">
+
+    <!-- Header info -->
+    <div class="card p-4">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:rgba(167,139,250,.14);border:1px solid rgba(167,139,250,.22)"><span class="text-base">👶</span></div>
+        <div>
+          <p class="text-sm font-semibold text-violet-300 mb-0.5">Metode Holliday-Segar</p>
+          <p class="text-[.68rem] text-slate-400 leading-relaxed">Kalkulasi cairan rumatan anak dengan rumus 100-50-20 (mL/hari) dan 4-2-1 (mL/jam).</p>
+        </div>
+      </div>
+      <div class="bv px-3 py-2.5 space-y-1.5">
+        <p class="lbl mb-1.5" style="color:rgba(167,139,250,.6)">Rumus Referensi</p>
+        <div class="flex justify-between"><span class="text-[.67rem] text-violet-300/80 font-medium">0 – 10 kg</span><span class="text-[.67rem] font-mono text-violet-200">4 mL/kg/jam &nbsp;|&nbsp; 100 mL/kg/hari</span></div>
+        <div class="flex justify-between"><span class="text-[.67rem] text-violet-300/80 font-medium">10 – 20 kg</span><span class="text-[.67rem] font-mono text-violet-200">2 mL/kg/jam &nbsp;|&nbsp; 50 mL/kg/hari</span></div>
+        <div class="flex justify-between"><span class="text-[.67rem] text-violet-300/80 font-medium">&gt; 20 kg</span><span class="text-[.67rem] font-mono text-violet-200">1 mL/kg/jam &nbsp;|&nbsp; 20 mL/kg/hari</span></div>
+      </div>
+    </div>
+
+    <!-- Input BB -->
+    <div class="card p-4">
+      <p class="lbl mb-3">Berat Badan Anak</p>
+      <div class="relative">
+        <input type="number" id="hsWt" class="inp" style="padding-right:2.2rem;font-size:1rem;padding-top:.85rem;padding-bottom:.85rem" placeholder="Masukkan berat badan pasien (kg)" min="0.5" max="120" step="0.1" inputmode="decimal">
+        <span class="sfx" style="font-size:.78rem">kg</span>
+      </div>
+      <p class="text-[.63rem] text-slate-500 mt-2 font-medium">Berlaku untuk BB ≤ 120 kg. Pastikan berat badan aktual pasien.</p>
+    </div>
+
+    <!-- Results 1 -->
+    <div>
+      <div id="r1w" class="fade on bn p-5 flex flex-col items-center text-center gap-2.5">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.15)">
+          <svg class="w-5 h-5" style="color:rgba(167,139,250,.4)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+        </div>
+        <p class="text-xs text-slate-500 font-medium">Masukkan berat badan anak<br>untuk menghitung kebutuhan cairan</p>
+      </div>
+      <div id="r1e" class="fade be p-4 hidden flex items-start gap-3">
+        <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center" style="background:rgba(248,113,113,.15)"><svg class="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></div>
+        <p id="r1em" class="text-sm text-red-300 leading-relaxed font-medium"></p>
+      </div>
+      <div id="r1r" class="fade oc-v p-4 space-y-3 hidden">
+        <div class="flex items-center justify-between">
+          <p class="lbl" style="color:rgba(167,139,250,.55)">Hasil Holliday-Segar</p>
+          <div class="flex items-center gap-1.5"><div class="pulse pv bg-violet-400"></div><span class="text-[.62rem] text-violet-400/75 font-bold tracking-wide">REAL-TIME</span></div>
+        </div>
+
+        <!-- Total / hari -->
+        <div class="om-v p-4 text-center">
+          <p class="text-[.62rem] text-violet-300/60 font-bold tracking-widest uppercase mb-1.5">Total Kebutuhan Cairan / Hari</p>
+          <div class="flex items-baseline justify-center gap-2">
+            <span id="v1t" class="num text-[2.8rem] font-bold text-violet-400 leading-none">—</span>
+            <div class="flex flex-col items-start"><span class="text-violet-300/80 font-bold text-lg leading-tight">mL</span><span class="text-violet-300/55 font-medium text-xs">/hari</span></div>
+          </div>
+        </div>
+
+        <!-- Rate per hour row -->
+        <div class="bv px-4 py-3 flex items-center justify-between">
+          <span class="text-[.7rem] text-violet-300/70 font-semibold">Kecepatan Infus (mL/jam)</span>
+          <div class="flex items-baseline gap-1.5"><span id="v1r" class="num text-xl font-bold text-violet-300">—</span><span class="text-[.68rem] text-violet-300/60 font-medium">mL/jam</span></div>
+        </div>
+
+        <!-- TPM grid -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <div class="os-c p-3 text-center">
+            <p class="text-[.6rem] text-slate-400 font-bold mb-0.5">MAKRO SET</p>
+            <p class="text-[.56rem] text-cyan-400/45 font-mono mb-1.5">20 gtt/mL</p>
+            <div class="flex items-baseline justify-center gap-1"><span id="v1m" class="num text-2xl font-bold text-cyan-400 leading-none">—</span><span class="text-[.63rem] text-cyan-300/60 font-medium">tpm</span></div>
+          </div>
+          <div class="os-i p-3 text-center">
+            <p class="text-[.6rem] text-slate-400 font-bold mb-0.5">MIKRO SET</p>
+            <p class="text-[.56rem] text-indigo-400/45 font-mono mb-1.5">60 gtt/mL</p>
+            <div class="flex items-baseline justify-center gap-1"><span id="v1mi" class="num text-2xl font-bold text-indigo-400 leading-none">—</span><span class="text-[.63rem] text-indigo-300/60 font-medium">tpm</span></div>
+          </div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="sep"></div>
+        <div>
+          <p class="lbl mb-2" style="color:rgba(167,139,250,.55)">Rincian Kalkulasi (100-50-20)</p>
+          <div id="v1bd" class="space-y-1"></div>
+        </div>
+
+        <!-- 4-2-1 rule -->
+        <div class="bv px-3 py-2.5">
+          <p class="text-[.62rem] text-violet-300/60 font-bold tracking-wide uppercase mb-1.5">Aturan 4-2-1 (mL/jam)</p>
+          <div id="v1_421" class="space-y-0.5"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ftcard px-4 py-3 flex items-start gap-2.5 mt-3.5">
+      <svg class="w-3.5 h-3.5 text-amber-400/60 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+      <p class="text-[.67rem] text-slate-400/70 leading-relaxed"><strong class="text-amber-400/75 font-semibold">Disclaimer:</strong> Alat bantu hitung digital. Verifikasi manual sesuai protokol klinis tetap menjadi tanggung jawab klinisi.</p>
+    </div>
+    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · Holliday-Segar Maintenance Fluid Calculator</p>
+
+  </div><!-- /p1 -->
+
+
+  <!-- ▓▓▓▓▓▓ PANEL 2 — TARGET WAKTU ▓▓▓▓▓▓ -->
+  <div id="p2" class="panel space-y-3.5">
+
+    <!-- Header info -->
+    <div class="card p-4">
+      <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:rgba(251,113,133,.14);border:1px solid rgba(251,113,133,.22)"><span class="text-base">⏱️</span></div>
+        <div>
+          <p class="text-sm font-semibold text-rose-300 mb-0.5">Kalkulator Target Waktu Habis</p>
+          <p class="text-[.68rem] text-slate-400 leading-relaxed">Masukkan volume cairan dan target durasi habis. Kecepatan infus yang dibutuhkan akan dihitung otomatis.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs: 2 column -->
+    <div class="card p-4">
+      <p class="lbl mb-3">Parameter Infus</p>
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">Volume Cairan</label>
+          <div class="relative">
+            <input type="number" id="twVol" class="inp" style="padding-right:2.3rem" placeholder="misal: 500" min="1" step="any" inputmode="decimal">
+            <span class="sfx">mL</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1.5 font-medium">Target Habis Dalam</label>
+          <div class="relative">
+            <input type="number" id="twHr" class="inp" style="padding-right:2.3rem" placeholder="misal: 8" min="0.1" step="any" inputmode="decimal">
+            <span class="sfx">jam</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick volume -->
+      <p class="lbl mb-2">Volume Umum</p>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button class="qbtn qbtn-r" data-vol="100">100 mL</button>
+        <button class="qbtn qbtn-r" data-vol="250">250 mL</button>
+        <button class="qbtn qbtn-r" data-vol="500">500 mL</button>
+        <button class="qbtn qbtn-r" data-vol="1000">1000 mL</button>
+      </div>
+
+      <!-- Quick hours -->
+      <p class="lbl mb-2">Durasi Umum</p>
+      <div class="flex flex-wrap gap-2">
+        <button class="qbtn qbtn-c" data-hr="1">1 jam</button>
+        <button class="qbtn qbtn-c" data-hr="4">4 jam</button>
+        <button class="qbtn qbtn-c" data-hr="6">6 jam</button>
+        <button class="qbtn qbtn-c" data-hr="8">8 jam</button>
+        <button class="qbtn qbtn-c" data-hr="12">12 jam</button>
+        <button class="qbtn qbtn-c" data-hr="24">24 jam</button>
+      </div>
+    </div>
+
+    <!-- Results 2 -->
+    <div>
+      <div id="r2w" class="fade on bn p-5 flex flex-col items-center text-center gap-2.5">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.15)">
+          <svg class="w-5 h-5" style="color:rgba(251,113,133,.4)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <p class="text-xs text-slate-500 font-medium">Masukkan volume dan durasi target<br>untuk menghitung kecepatan infus</p>
+      </div>
+      <div id="r2e" class="fade be p-4 hidden flex items-start gap-3">
+        <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center" style="background:rgba(248,113,113,.15)"><svg class="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></div>
+        <p id="r2em" class="text-sm text-red-300 leading-relaxed font-medium"></p>
+      </div>
+      <div id="r2r" class="fade oc-r p-4 space-y-3 hidden">
+        <div class="flex items-center justify-between">
+          <p class="lbl" style="color:rgba(251,113,133,.55)">Hasil Kalkulasi</p>
+          <div class="flex items-center gap-1.5"><div class="pulse pr bg-rose-400"></div><span class="text-[.62rem] text-rose-400/75 font-bold tracking-wide">REAL-TIME</span></div>
+        </div>
+
+        <!-- Main rate -->
+        <div class="om-r p-4 text-center">
+          <p class="text-[.62rem] text-rose-300/60 font-bold tracking-widest uppercase mb-1.5">Kecepatan Infus</p>
+          <div class="flex items-baseline justify-center gap-2">
+            <span id="v2r" class="num text-[2.8rem] font-bold text-rose-400 leading-none">—</span>
+            <div class="flex flex-col items-start"><span class="text-rose-300/80 font-bold text-lg leading-tight">mL</span><span class="text-rose-300/55 font-medium text-xs">/jam</span></div>
+          </div>
+        </div>
+
+        <!-- TPM grid -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <div class="os-c p-3 text-center">
+            <p class="text-[.6rem] text-slate-400 font-bold mb-0.5">MAKRO SET</p>
+            <p class="text-[.56rem] text-cyan-400/45 font-mono mb-1.5">20 gtt/mL</p>
+            <div class="flex items-baseline justify-center gap-1"><span id="v2m" class="num text-2xl font-bold text-cyan-400 leading-none">—</span><span class="text-[.63rem] text-cyan-300/60 font-medium">tpm</span></div>
+          </div>
+          <div class="os-i p-3 text-center">
+            <p class="text-[.6rem] text-slate-400 font-bold mb-0.5">MIKRO SET</p>
+            <p class="text-[.56rem] text-indigo-400/45 font-mono mb-1.5">60 gtt/mL</p>
+            <div class="flex items-baseline justify-center gap-1"><span id="v2mi" class="num text-2xl font-bold text-indigo-400 leading-none">—</span><span class="text-[.63rem] text-indigo-300/60 font-medium">tpm</span></div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="sep"></div>
+        <div class="br px-3 py-2.5 space-y-1">
+          <p class="lbl mb-1" style="color:rgba(251,113,133,.55)">Ringkasan</p>
+          <div id="s2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ftcard px-4 py-3 flex items-start gap-2.5 mt-3.5">
+      <svg class="w-3.5 h-3.5 text-amber-400/60 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+      <p class="text-[.67rem] text-slate-400/70 leading-relaxed"><strong class="text-amber-400/75 font-semibold">Disclaimer:</strong> Alat bantu hitung digital. Verifikasi manual sesuai protokol klinis tetap menjadi tanggung jawab klinisi.</p>
+    </div>
+    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · Target Waktu Habis Calculator</p>
+
+  </div><!-- /p2 -->
+
+</main>
+
+<script>
+(function(){
+'use strict';
+
+// ── Utilities ────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function av(el, txt) {           // animate value
+  if (!el) return;
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.textContent = txt;
+  el.classList.add('pop');
+}
+
+function ss(w, e, r, eEl, eMsg, state) {  // set state (wait/err/ok)
+  [w, e, r].forEach(el => { if(el){ el.classList.add('hidden'); el.classList.remove('on'); }});
+  const tgt = state==='wait'?w : state==='err'?e : r;
+  if (!tgt) return;
+  tgt.classList.remove('hidden');
+  if (state==='err' && eEl) eEl.textContent = eMsg||'';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>tgt.classList.add('on')));
+}
+
+function sr(k, v) {              // summary row HTML
+  return `<div class="flex items-center justify-between gap-2">
+    <span class="text-[.63rem] text-slate-500 font-medium">${k}</span>
+    <span class="text-[.66rem] text-slate-300 font-mono font-medium">${v}</span>
+  </div>`;
+}
+
+// ── Tab switching ────────────────────────────────────────────────
+const tabClasses = ['a0','a1','a2'];
+window.goTab = function(idx) {
+  [0,1,2].forEach(i => {
+    $(`p${i}`).classList.toggle('on', i===idx);
+    const btn = $(`tb${i}`);
+    tabClasses.forEach(c => btn.classList.remove(c));
+    if (i===idx) btn.classList.add(`a${idx}`);
+  });
+};
+
+// ── Global reset ─────────────────────────────────────────────────
+$('gReset').addEventListener('click', () => {
+  // tab 0
+  $('presetSel').value=''; $('drugMg').value=''; $('volMl').value='';
+  $('doseInp').value=''; $('wtInp').value=''; $('doseUnit').value='mcg/kg/menit';
+  $('pInfo').classList.add('hidden'); $('concBox').classList.add('hidden');
+  $('wtRow').classList.remove('hidden');
+  ss($('r0w'),$('r0e'),$('r0r'),$('r0em'),'','wait');
+  // tab 1
+  $('hsWt').value='';
+  ss($('r1w'),$('r1e'),$('r1r'),$('r1em'),'','wait');
+  // tab 2
+  $('twVol').value=''; $('twHr').value='';
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active-q'));
+  ss($('r2w'),$('r2e'),$('r2r'),$('r2em'),'','wait');
+});
+
+// ════════════════════════════════════════════════════════════════
+// TAB 0 — POMPA INFUS
+// ════════════════════════════════════════════════════════════════
+
+const PRESETS = [
+  {id:'norep',name:'Norepinefrin',       drugMg:4,  volMl:50,solvent:'NaCl 0.9%',unit:'mcg/kg/menit',tip:'0.01–3 mcg/kg/menit',   note:'Vasopressor lini pertama sepsis'},
+  {id:'dobu', name:'Dobutamin',          drugMg:250,volMl:50,solvent:'NaCl 0.9%',unit:'mcg/kg/menit',tip:'2–20 mcg/kg/menit',      note:'Inotropik pilihan gagal jantung akut'},
+  {id:'dopa', name:'Dopamin',            drugMg:200,volMl:50,solvent:'NaCl 0.9%',unit:'mcg/kg/menit',tip:'2–20 mcg/kg/menit',      note:'Renal:1–3 | Ino:3–10 | Vaso:>10 mcg/kg/min'},
+  {id:'vaso', name:'Vasopresin',         drugMg:20, volMl:50,solvent:'NaCl 0.9%',unit:'mcg/menit',   tip:'0.01–0.04 U/menit',      note:'20 Unit dimasukkan sebagai 20 mg-ekuivalen'},
+  {id:'milri',name:'Milrinon',           drugMg:10, volMl:50,solvent:'D5%',       unit:'mcg/kg/menit',tip:'0.25–0.75 mcg/kg/menit', note:'Inhibitor PDE-3; titrasi pelan'},
+  {id:'epi',  name:'Epinefrin',          drugMg:1,  volMl:50,solvent:'NaCl 0.9%',unit:'mcg/kg/menit',tip:'0.01–1 mcg/kg/menit',    note:'Anafilaksis, syok kardiogenik, cardiac arrest'},
+  {id:'furo', name:'Furosemid (Drip)',   drugMg:100,volMl:50,solvent:'NaCl 0.9%',unit:'mg/jam',      tip:'5–40 mg/jam',             note:'Diuretik loop; pantau elektrolit'},
+  {id:'ntg',  name:'Nitrogliserin / NTG',drugMg:50, volMl:50,solvent:'D5%',       unit:'mcg/menit',   tip:'5–200 mcg/menit',         note:'Hindari infus set PVC; gunakan kaca/PE'},
+  {id:'isdn', name:'ISDN',               drugMg:10, volMl:50,solvent:'NaCl 0.9%',unit:'mg/jam',      tip:'1–10 mg/jam',             note:'Titrasi sesuai tekanan darah'},
+  {id:'nica', name:'Nikardipin',         drugMg:5,  volMl:50,solvent:'NaCl 0.9%',unit:'mg/jam',      tip:'5–15 mg/jam',             note:'CCB; emergensi hipertensi'},
+];
+PRESETS.forEach(p => {
+  const o = document.createElement('option');
+  o.value=p.id; o.textContent=p.name;
+  $('presetSel').appendChild(o);
+});
+
+$('presetSel').addEventListener('change', () => {
+  const pid=$('presetSel').value;
+  if (!pid) { $('pInfo').classList.add('hidden'); return; }
+  const p = PRESETS.find(x=>x.id===pid); if(!p)return;
+  $('drugMg').value=p.drugMg; $('volMl').value=p.volMl; $('doseUnit').value=p.unit;
+  $('pRange').textContent=p.tip; $('pNote').textContent=`Pelarut: ${p.solvent} · ${p.note}`;
+  $('pInfo').classList.remove('hidden');
+  $('doseInp').value=''; $('wtInp').value='';
+  chkUnit(); p0calc();
+});
+
+function chkUnit() {
+  const nk = $('doseUnit').value.includes('/kg');
+  $('wtRow').classList.toggle('hidden',!nk);
+}
+$('doseUnit').addEventListener('change', ()=>{ chkUnit(); p0calc(); });
+[$('drugMg'),$('volMl'),$('wtInp'),$('doseInp')].forEach(e=>e.addEventListener('input',p0calc));
+
+function p0calc() {
+  const mg   = parseFloat($('drugMg').value);
+  const vol  = parseFloat($('volMl').value);
+  const dose = parseFloat($('doseInp').value);
+  const unit = $('doseUnit').value;
+  const wt   = parseFloat($('wtInp').value);
+  const nk   = unit.includes('/kg');
+
+  // conc display
+  if (mg>0 && vol>0) {
+    const mm=(mg/vol).toFixed(4).replace(/\.?0+$/,'');
+    const um=(mg*1000/vol).toFixed(2).replace(/\.?0+$/,'');
+    $('concTxt').textContent=`${mm} mg/mL = ${um} mcg/mL`;
+    $('concBox').classList.remove('hidden');
+  } else $('concBox').classList.add('hidden');
+
+  const set=(s,m)=>ss($('r0w'),$('r0e'),$('r0r'),$('r0em'),m,s);
+  if (!mg||mg<=0||!vol||vol<=0||!dose||dose<=0) { set('wait'); return; }
+  if (nk && (!wt||wt<=0)) { set('err','Masukkan berat badan pasien (kg) untuk satuan dosis berbasis /kg.'); return; }
+
+  const cMcg=(mg*1000)/vol, cMg=mg/vol;
+  let rate;
+  switch(unit) {
+    case 'mcg/kg/menit': rate=(dose*wt*60)/cMcg; break;
+    case 'mcg/kg/jam':   rate=(dose*wt)/cMcg;    break;
+    case 'mcg/menit':    rate=(dose*60)/cMcg;    break;
+    case 'mcg/jam':      rate=dose/cMcg;          break;
+    case 'mg/jam':       rate=dose/cMg;           break;
+    case 'mg/kg/jam':    rate=(dose*wt)/cMg;      break;
+    default: set('err','Satuan tidak dikenali.'); return;
+  }
+  if (!isFinite(rate)||rate<0) { set('err','Hasil tidak valid.'); return; }
+
+  av($('v0r'), rate.toFixed(2));
+  av($('v0m'), ((rate*20)/60).toFixed(2));
+  av($('v0mi'),((rate*60)/60).toFixed(2));
+
+  $('s0').innerHTML=[
+    ['Dosis target',`${dose} ${unit}`],
+    nk?['Berat badan',`${wt} kg`]:null,
+    ['Dilusi',`${mg} mg / ${vol} mL`],
+    ['Konsentrasi',`${cMcg.toFixed(2)} mcg/mL`],
+  ].filter(Boolean).map(([k,v])=>sr(k,v)).join('');
+
+  set('ok');
+}
+
+chkUnit(); ss($('r0w'),$('r0e'),$('r0r'),$('r0em'),'','wait');
+
+
+// ════════════════════════════════════════════════════════════════
+// TAB 1 — HOLLIDAY-SEGAR
+// ════════════════════════════════════════════════════════════════
+
+$('hsWt').addEventListener('input', hsCalc);
+
+function hsCalc() {
+  const wt = parseFloat($('hsWt').value);
+  const set = (s,m) => ss($('r1w'),$('r1e'),$('r1r'),$('r1em'),m,s);
+
+  if (!wt||wt<=0) { set('wait'); return; }
+  if (wt>120)     { set('err','Berat badan melebihi batas 120 kg untuk rumus ini.'); return; }
+
+  // ── 100-50-20 (mL/day) ──────────────────────────────────────
+  let seg1=0, seg2=0, seg3=0;
+  if (wt<=10)      { seg1=wt*100; }
+  else if (wt<=20) { seg1=1000; seg2=(wt-10)*50; }
+  else             { seg1=1000; seg2=500; seg3=(wt-20)*20; }
+  const total = seg1+seg2+seg3;
+  const rateHr = total/24;
+  const makro  = (rateHr*20)/60;
+  const mikro  = (rateHr*60)/60;
+
+  av($('v1t'), Math.round(total).toString());
+  av($('v1r'), rateHr.toFixed(2));
+  av($('v1m'), makro.toFixed(2));
+  av($('v1mi'),mikro.toFixed(2));
+
+  // Breakdown 100-50-20
+  const bdRows = [
+    {label:`Segmen 1: 0 – ${Math.min(wt,10).toFixed(1)} kg × 100 mL/kg/hari`, val:seg1},
+    ...(seg2>0?[{label:`Segmen 2: 10 – ${Math.min(wt,20).toFixed(1)} kg × 50 mL/kg/hari`, val:seg2}]:[]),
+    ...(seg3>0?[{label:`Segmen 3: 20 – ${wt.toFixed(1)} kg × 20 mL/kg/hari`, val:seg3}]:[]),
+    {label:'Total cairan / hari', val:Math.round(total), bold:true},
+  ];
+  $('v1bd').innerHTML = bdRows.map(r=>
+    `<div class="hrow ${r.bold?'font-bold':''}">
+      <span class="text-[.66rem] ${r.bold?'text-violet-300':'text-slate-400'} font-medium">${r.label}</span>
+      <span class="text-[.68rem] font-mono ${r.bold?'text-violet-200 font-bold':'text-slate-300'}">${r.val} mL</span>
+    </div>`
+  ).join('');
+
+  // 4-2-1 rule
+  let r1=0,r2=0,r3=0;
+  if (wt<=10)      r1=wt*4;
+  else if (wt<=20) { r1=40; r2=(wt-10)*2; }
+  else             { r1=40; r2=20; r3=(wt-20)*1; }
+  const t421=r1+r2+r3;
+  const rows421=[
+    {l:`0–${Math.min(wt,10).toFixed(1)} kg × 4 mL/kg/jam`, v:r1},
+    ...(r2>0?[{l:`10–${Math.min(wt,20).toFixed(1)} kg × 2 mL/kg/jam`, v:r2}]:[]),
+    ...(r3>0?[{l:`>20 kg × 1 mL/kg/jam`, v:r3}]:[]),
+    {l:'Total (4-2-1)', v:t421, bold:true},
+  ];
+  $('v1_421').innerHTML = rows421.map(r=>
+    `<div class="flex justify-between items-center">
+      <span class="text-[.64rem] ${r.bold?'text-violet-300 font-semibold':'text-violet-300/60'}">${r.l}</span>
+      <span class="text-[.66rem] font-mono ${r.bold?'text-violet-200 font-bold':'text-violet-200/70'}">${r.v.toFixed(2)} mL/jam</span>
+    </div>`
+  ).join('');
+
+  set('ok');
+}
+
+ss($('r1w'),$('r1e'),$('r1r'),$('r1em'),'','wait');
+
+
+// ════════════════════════════════════════════════════════════════
+// TAB 2 — TARGET WAKTU
+// ════════════════════════════════════════════════════════════════
+
+$('twVol').addEventListener('input', twCalc);
+$('twHr').addEventListener('input', twCalc);
+
+// Quick buttons
+document.querySelectorAll('.qbtn[data-vol]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $('twVol').value = btn.dataset.vol;
+    document.querySelectorAll('.qbtn[data-vol]').forEach(b=>b.classList.remove('active-q'));
+    btn.classList.add('active-q');
+    twCalc();
+  });
+});
+document.querySelectorAll('.qbtn[data-hr]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $('twHr').value = btn.dataset.hr;
+    document.querySelectorAll('.qbtn[data-hr]').forEach(b=>b.classList.remove('active-q'));
+    btn.classList.add('active-q');
+    twCalc();
+  });
+});
+
+function twCalc() {
+  const vol = parseFloat($('twVol').value);
+  const hrs = parseFloat($('twHr').value);
+  const set = (s,m) => ss($('r2w'),$('r2e'),$('r2r'),$('r2em'),m,s);
+
+  if (!vol||vol<=0||!hrs||hrs<=0) { set('wait'); return; }
+  if (hrs>720) { set('err','Durasi terlalu panjang (maks. 720 jam / 30 hari).'); return; }
+
+  const rate  = vol/hrs;
+  const makro = (rate*20)/60;
+  const mikro = (rate*60)/60;
+
+  av($('v2r'),  rate.toFixed(2));
+  av($('v2m'),  makro.toFixed(2));
+  av($('v2mi'), mikro.toFixed(2));
+
+  const dH  = Math.floor(hrs);
+  const dM  = Math.round((hrs-dH)*60);
+  const dur = dM>0?`${dH} jam ${dM} menit`:`${dH} jam`;
+
+  $('s2').innerHTML=[
+    ['Volume cairan', `${vol} mL`],
+    ['Target durasi', dur],
+    ['Total menit',   `${(hrs*60).toFixed(0)} menit`],
+    ['Kecepatan',     `${rate.toFixed(2)} mL/jam`],
+  ].map(([k,v])=>sr(k,v)).join('');
+
+  set('ok');
+}
+
+ss($('r2w'),$('r2e'),$('r2r'),$('r2em'),'','wait');
+
+})();
+</script>
+
+</body>
+</html>
