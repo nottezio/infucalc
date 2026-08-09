@@ -264,14 +264,25 @@
       <select id="presetSel" class="inp">
         <option value="">— Pilih Preset Obat (Opsional) —</option>
       </select>
-      <div id="pInfo" class="hidden mt-3 bw px-3 py-2.5 flex items-start gap-2.5">
-        <svg class="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 3.5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0V5.25A.75.75 0 018 4.5zM8 11a1 1 0 110-2 1 1 0 010 2z"/>
-        </svg>
-        <div class="flex-1 min-w-0">
-          <p class="text-[.68rem] text-amber-300 font-semibold mb-0.5">Rentang Dosis Lazim</p>
-          <p id="pRange" class="text-[.68rem] text-amber-200 font-mono font-medium"></p>
-          <p id="pNote"  class="text-[.63rem] text-amber-200/60 mt-0.5"></p>
+      <div id="pInfo" class="hidden mt-3 space-y-2.5">
+        <!-- Dose range -->
+        <div class="bw px-3 py-2.5 flex items-start gap-2.5">
+          <svg class="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 3.5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0V5.25A.75.75 0 018 4.5zM8 11a1 1 0 110-2 1 1 0 010 2z"/>
+          </svg>
+          <div class="flex-1 min-w-0">
+            <p class="text-[.68rem] text-amber-300 font-semibold mb-0.5">Rentang Dosis Lazim</p>
+            <p id="pRange" class="text-[.68rem] text-amber-200 font-mono font-medium"></p>
+            <p id="pNote"  class="text-[.63rem] text-amber-200/60 mt-0.5"></p>
+          </div>
+        </div>
+        <!-- Sediaan Indonesia -->
+        <div class="bi px-3 py-2.5">
+          <div class="flex items-center gap-1.5 mb-2">
+            <svg class="w-3 h-3 text-cyan-400/70 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+            <p class="text-[.62rem] text-cyan-400/70 font-bold tracking-wide uppercase">Sediaan di Indonesia</p>
+          </div>
+          <div id="pSediaan" class="space-y-1.5"></div>
         </div>
       </div>
     </div>
@@ -377,7 +388,7 @@
       <svg class="w-3.5 h-3.5 text-amber-400/60 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
       <p class="text-[.67rem] text-slate-400/70 leading-relaxed"><strong class="text-amber-400/75 font-semibold">Disclaimer:</strong> Alat bantu hitung digital. Verifikasi manual sesuai protokol klinis tetap menjadi tanggung jawab klinisi.</p>
     </div>
-    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · IGD / ICU Syringe &amp; Infusion Pump Calculator</p>
+    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · IGD / ICU Syringe &amp; Infusion Pump Calculator · <span class="text-slate-600">dr. Avicenna</span></p>
 
   </div><!-- /p0 -->
 
@@ -478,7 +489,7 @@
       <svg class="w-3.5 h-3.5 text-amber-400/60 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
       <p class="text-[.67rem] text-slate-400/70 leading-relaxed"><strong class="text-amber-400/75 font-semibold">Disclaimer:</strong> Alat bantu hitung digital. Verifikasi manual sesuai protokol klinis tetap menjadi tanggung jawab klinisi.</p>
     </div>
-    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · Holliday-Segar Maintenance Fluid Calculator</p>
+    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · Holliday-Segar Maintenance Fluid Calculator · <span class="text-slate-600">dr. Avicenna</span></p>
 
   </div><!-- /p1 -->
 
@@ -592,7 +603,7 @@
       <svg class="w-3.5 h-3.5 text-amber-400/60 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
       <p class="text-[.67rem] text-slate-400/70 leading-relaxed"><strong class="text-amber-400/75 font-semibold">Disclaimer:</strong> Alat bantu hitung digital. Verifikasi manual sesuai protokol klinis tetap menjadi tanggung jawab klinisi.</p>
     </div>
-    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · Target Waktu Habis Calculator</p>
+    <p class="text-center text-[.57rem] text-slate-700 font-medium pb-1">InfuCalc v2.0 · Target Waktu Habis Calculator · <span class="text-slate-600">dr. Avicenna</span></p>
 
   </div><!-- /p2 -->
 
@@ -662,16 +673,114 @@ $('gReset').addEventListener('click', () => {
 // ════════════════════════════════════════════════════════════════
 
 const PRESETS = [
-  {id:'norep',name:'Norepinefrin',       drugMg:4,  volMl:50,solvent:'NaCl 0.9%',unit:'mcg/kg/menit',tip:'0.01–3 mcg/kg/menit',   note:'Vasopressor lini pertama sepsis'},
-  {id:'dobu', name:'Dobutamin',          drugMg:250,volMl:50,solvent:'NaCl 0.9%',unit:'mcg/kg/menit',tip:'2–20 mcg/kg/menit',      note:'Inotropik pilihan gagal jantung akut'},
-  {id:'dopa', name:'Dopamin',            drugMg:200,volMl:50,solvent:'NaCl 0.9%',unit:'mcg/kg/menit',tip:'2–20 mcg/kg/menit',      note:'Renal:1–3 | Ino:3–10 | Vaso:>10 mcg/kg/min'},
-  {id:'vaso', name:'Vasopresin',         drugMg:20, volMl:50,solvent:'NaCl 0.9%',unit:'mcg/menit',   tip:'0.01–0.04 U/menit',      note:'20 Unit dimasukkan sebagai 20 mg-ekuivalen'},
-  {id:'milri',name:'Milrinon',           drugMg:10, volMl:50,solvent:'D5%',       unit:'mcg/kg/menit',tip:'0.25–0.75 mcg/kg/menit', note:'Inhibitor PDE-3; titrasi pelan'},
-  {id:'epi',  name:'Epinefrin',          drugMg:1,  volMl:50,solvent:'NaCl 0.9%',unit:'mcg/kg/menit',tip:'0.01–1 mcg/kg/menit',    note:'Anafilaksis, syok kardiogenik, cardiac arrest'},
-  {id:'furo', name:'Furosemid (Drip)',   drugMg:100,volMl:50,solvent:'NaCl 0.9%',unit:'mg/jam',      tip:'5–40 mg/jam',             note:'Diuretik loop; pantau elektrolit'},
-  {id:'ntg',  name:'Nitrogliserin / NTG',drugMg:50, volMl:50,solvent:'D5%',       unit:'mcg/menit',   tip:'5–200 mcg/menit',         note:'Hindari infus set PVC; gunakan kaca/PE'},
-  {id:'isdn', name:'ISDN',               drugMg:10, volMl:50,solvent:'NaCl 0.9%',unit:'mg/jam',      tip:'1–10 mg/jam',             note:'Titrasi sesuai tekanan darah'},
-  {id:'nica', name:'Nikardipin',         drugMg:5,  volMl:50,solvent:'NaCl 0.9%',unit:'mg/jam',      tip:'5–15 mg/jam',             note:'CCB; emergensi hipertensi'},
+  {
+    id:'norep', name:'Norepinefrin', drugMg:4, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mcg/kg/menit', tip:'0.01 – 3 mcg/kg/menit (titrasi sesuai MAP target)',
+    note:'Vasopressor lini pertama sepsis (Surviving Sepsis Campaign 2021)',
+    sediaan:[
+      {bentuk:'Ampul 4 mg/4 mL (1 mg/mL)',  status:'FORNAS', ket:'Norepinefrin bitartrat; tersedia RS tipe B/C/D'},
+      {bentuk:'Ampul 8 mg/8 mL (1 mg/mL)',  status:'FORNAS', ket:'Sediaan alternatif RS tipe A'},
+    ]
+  },
+  {
+    id:'dobu', name:'Dobutamin', drugMg:250, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mcg/kg/menit', tip:'2 – 20 mcg/kg/menit',
+    note:'Inotropik pilihan gagal jantung akut / syok kardiogenik',
+    sediaan:[
+      {bentuk:'Vial 250 mg/20 mL (12.5 mg/mL)', status:'FORNAS', ket:'Dobutamin HCl; tersedia RS tipe A/B'},
+      {bentuk:'Vial 250 mg/5 mL (50 mg/mL)',    status:'FORNAS', ket:'Wajib larutkan sebelum digunakan'},
+    ]
+  },
+  {
+    id:'dopa', name:'Dopamin', drugMg:200, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mcg/kg/menit', tip:'2 – 20 mcg/kg/menit',
+    note:'Renal: 1–3 | Inotropik: 3–10 | Vasopresor: >10 mcg/kg/menit',
+    sediaan:[
+      {bentuk:'Ampul 200 mg/5 mL (40 mg/mL)',  status:'FORNAS', ket:'Dopamin HCl; tersedia luas seluruh RS'},
+      {bentuk:'Ampul 200 mg/10 mL (20 mg/mL)', status:'FORNAS', ket:'Sediaan alternatif; wajib larutkan'},
+    ]
+  },
+  {
+    id:'vaso', name:'Vasopresin', drugMg:20, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mcg/menit', tip:'0.01 – 0.04 Unit/menit (≈ 1.2 – 2.4 mL/jam)',
+    note:'20 Unit dimasukkan sebagai 20 mg-ekuivalen dalam kalkulator ini',
+    sediaan:[
+      {bentuk:'Ampul 20 Unit/mL', status:'Non-FORNAS', ket:'⚠️ Ketersediaan terbatas; verifikasi formularium RS'},
+    ]
+  },
+  {
+    id:'milri', name:'Milrinon', drugMg:10, volMl:50, solvent:'D5%',
+    unit:'mcg/kg/menit', tip:'0.25 – 0.75 mcg/kg/menit (tanpa loading dose rutin)',
+    note:'Inhibitor PDE-3; titrasi pelan; awasi aritmia dan hipotensi',
+    sediaan:[
+      {bentuk:'Vial 10 mg/10 mL (1 mg/mL)', status:'Non-FORNAS', ket:'⚠️ Tidak termasuk FORNAS; sering tersedia RS tipe A'},
+    ]
+  },
+  {
+    id:'epi', name:'Epinefrin', drugMg:1, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mcg/kg/menit', tip:'0.01 – 1 mcg/kg/menit (titrasi)',
+    note:'Anafilaksis, syok kardiogenik, cardiac arrest — pertimbangkan norepinefrin pada sepsis',
+    sediaan:[
+      {bentuk:'Ampul 1 mg/mL (1:1000)',     status:'FORNAS', ket:'Adrenalin; tersedia di seluruh faskes'},
+      {bentuk:'Ampul 0.1 mg/mL (1:10000)', status:'FORNAS', ket:'Pre-dilusi; umumnya untuk cardiac arrest IV'},
+    ]
+  },
+  {
+    id:'furo', name:'Furosemid (Drip)', drugMg:100, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mg/jam', tip:'5 – 40 mg/jam (titrasi sesuai respons diuresis)',
+    note:'Diuretik loop; pantau elektrolit dan kreatinin berkala',
+    sediaan:[
+      {bentuk:'Ampul 10 mg/mL (2 mL = 20 mg)', status:'FORNAS', ket:'Tersedia luas; larutkan dalam NS untuk drip'},
+      {bentuk:'Ampul 10 mg/mL (5 mL = 50 mg)', status:'FORNAS', ket:'Sediaan alternatif di beberapa RS'},
+    ]
+  },
+  {
+    id:'ntg', name:'Nitrogliserin / NTG', drugMg:50, volMl:50, solvent:'D5%',
+    unit:'mcg/menit', tip:'5 – 200 mcg/menit',
+    note:'Hindari infus set PVC (adsorpsi obat); gunakan set kaca/polietilen',
+    sediaan:[
+      {bentuk:'Ampul 5 mg/mL', status:'Non-FORNAS', ket:'⚠️ Verifikasi ketersediaan; simpan terhindar cahaya'},
+      {bentuk:'Vial 50 mg/10 mL (5 mg/mL)', status:'Non-FORNAS', ket:'Larutkan dalam D5%; botol kaca'},
+    ]
+  },
+  {
+    id:'isdn', name:'ISDN (Isosorbide Dinitrate)', drugMg:10, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mg/jam', tip:'1 – 10 mg/jam',
+    note:'Vasodilator; titrasi sesuai MAP; awasi hipotensi',
+    sediaan:[
+      {bentuk:'Ampul 10 mg/10 mL (1 mg/mL)', status:'FORNAS', ket:'Isosorbide dinitrat IV; tersedia RS tipe B ke atas'},
+      {bentuk:'Ampul 10 mg/mL (undiluted)',   status:'FORNAS', ket:'Wajib diencerkan sebelum digunakan'},
+    ]
+  },
+  {
+    id:'nica', name:'Nikardipin', drugMg:5, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mg/jam', tip:'5 – 15 mg/jam',
+    note:'CCB; emergensi hipertensi — gunakan infusion pump; awasi hipotensi',
+    sediaan:[
+      {bentuk:'Ampul 10 mg/10 mL (1 mg/mL)', status:'FORNAS', ket:'Nikardipin HCl (Perdipine®); tersedia RS tipe A/B'},
+    ]
+  },
+  // ── PRESET BARU ──────────────────────────────────────────────────────────
+  {
+    id:'ephed', name:'Efedrin (Ephedrine)', drugMg:50, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mg/jam', tip:'30 – 60 mg/jam (0.5 – 1 mg/menit) · Drip singkat 30 menit',
+    note:'⚠️ Utamanya BOLUS IV. Drip hanya bila vasopressor lain tidak tersedia. Risiko tachyphylaxis tinggi setelah dosis berulang.',
+    sediaan:[
+      {bentuk:'Ampul 50 mg/1 mL (50 mg/mL)', status:'FORNAS',    ket:'Efedrin HCl · WAJIB DIENCERKAN sebelum IV · Tersedia kamar operasi/IGD'},
+      {bentuk:'Ampul 25 mg/1 mL (25 mg/mL)', status:'FORNAS',    ket:'Sediaan lebih aman untuk titrasi bolus'},
+      {bentuk:'Bolus lazim: 5–10 mg/dosis IV',status:'INFO-KLINIS',ket:'Encerkan 50 mg → 10 mL (5 mg/mL). Maks total 50 mg. Titrasi per tekanan darah.'},
+    ]
+  },
+  {
+    id:'phe', name:'Fenilefrin (Phenylephrine)', drugMg:10, volMl:50, solvent:'NaCl 0.9%',
+    unit:'mcg/kg/menit', tip:'0.5 – 1.4 mcg/kg/menit (periop) · 0.5 – 6 mcg/kg/menit (syok vasodilatasi) · Maks 200 mcg/menit',
+    note:'Pure α-1 agonis · Pilihan utama hipotensi spinal · Dapat menyebabkan bradikardia refleks · Awasi heart rate',
+    sediaan:[
+      {bentuk:'Ampul 10 mg/1 mL (10 mg/mL)',   status:'Non-FORNAS',  ket:'⚠️ Tidak termasuk FORNAS nasional · Tersedia terbatas RS tipe A / anestesi · WAJIB diencerkan'},
+      {bentuk:'Prep drip: 10 mg / 50 mL NS',   status:'INFO-KLINIS', ket:'→ 200 mcg/mL (syringe pump). Atau 10 mg / 500 mL → 20 mcg/mL (infusion pump, lebih aman)'},
+      {bentuk:'Bolus IV: 50–100 mcg/dosis',     status:'INFO-KLINIS', ket:'Maks 200 mcg/dosis · Tiap 1–2 menit sesuai respons · Encerkan ke 100 mcg/mL sebelum bolus'},
+    ]
+  },
 ];
 PRESETS.forEach(p => {
   const o = document.createElement('option');
@@ -684,7 +793,27 @@ $('presetSel').addEventListener('change', () => {
   if (!pid) { $('pInfo').classList.add('hidden'); return; }
   const p = PRESETS.find(x=>x.id===pid); if(!p)return;
   $('drugMg').value=p.drugMg; $('volMl').value=p.volMl; $('doseUnit').value=p.unit;
-  $('pRange').textContent=p.tip; $('pNote').textContent=`Pelarut: ${p.solvent} · ${p.note}`;
+  $('pRange').textContent=p.tip;
+  $('pNote').textContent=`Pelarut: ${p.solvent} · ${p.note}`;
+
+  // Render sediaan rows
+  const statusStyle = {
+    'FORNAS':      { bg:'rgba(16,185,129,0.13)', border:'rgba(16,185,129,0.30)', color:'#6ee7b7', label:'FORNAS' },
+    'Non-FORNAS':  { bg:'rgba(251,113,133,0.12)', border:'rgba(251,113,133,0.28)', color:'#fda4af', label:'Non-FORNAS' },
+    'INFO-KLINIS': { bg:'rgba(56,189,248,0.10)',  border:'rgba(56,189,248,0.22)',  color:'#7dd3fc', label:'INFO' },
+    'INFO':        { bg:'rgba(56,189,248,0.10)',  border:'rgba(56,189,248,0.22)',  color:'#7dd3fc', label:'INFO' },
+  };
+  $('pSediaan').innerHTML = (p.sediaan || []).map(s => {
+    const st = statusStyle[s.status] || statusStyle['INFO'];
+    return `<div style="background:${st.bg};border:1px solid ${st.border};border-radius:0.5rem;padding:0.4rem 0.6rem">
+      <div class="flex items-center justify-between gap-2 mb-0.5">
+        <span class="text-[.66rem] text-slate-200 font-semibold font-mono">${s.bentuk}</span>
+        <span style="background:${st.bg};border:1px solid ${st.border};color:${st.color};font-size:.55rem;font-weight:700;letter-spacing:.06em;padding:.1rem .4rem;border-radius:.35rem;white-space:nowrap">${st.label}</span>
+      </div>
+      <span class="text-[.62rem]" style="color:${st.color};opacity:0.75">${s.ket}</span>
+    </div>`;
+  }).join('');
+
   $('pInfo').classList.remove('hidden');
   $('doseInp').value=''; $('wtInp').value='';
   chkUnit(); p0calc();
