@@ -325,7 +325,7 @@ select.inp {
 .st-fornas { background: var(--ink); color: var(--label); }
 .st-non { color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
 .st-info { color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--rule-2); }
-.sed-k .ic { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; color: var(--ink); }
+.sed-k .ic, .range-n .ic { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; color: var(--ink); }
 
 /* reference table */
 .ref { width: 100%; border-collapse: collapse; font-size: .9375rem; }
@@ -443,8 +443,8 @@ select.inp {
 .meta { font-size: .8125rem; color: var(--ink-3); }
 
 @media (max-width: 420px) {
-  .text-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  .text-btn { width: 44px; padding: 0; }
+  .text-btn { padding: 0 10px; }
+  .brand-ver { margin-left: 4px; }
 }
 @media (max-width: 520px) {
   .tab { flex-direction: column; gap: 2px; font-size: .8125rem; min-height: 58px; padding: 6px 2px; }

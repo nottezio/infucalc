@@ -119,7 +119,7 @@ $('presetSel').addEventListener('change', () => {
   $('pCls').textContent = CLASS_LABEL[p.cls];
   $('pCls').dataset.cls = p.cls;
   $('pRange').textContent = p.tip;
-  $('pNote').textContent = `Pelarut: ${p.solvent} · ${p.note}`;
+  $('pNote').innerHTML = `Pelarut: ${esc(p.solvent)} · ${ketHtml(p.note)}`;
   $('pSediaan').innerHTML = (p.sediaan || []).map(s => {
     const st = STATUS[s.status] || STATUS.INFO;
     return `<li class="sed">
