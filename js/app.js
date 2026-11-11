@@ -5,6 +5,7 @@ const root = document.documentElement;
 
 /* ─── Version ─────────────────────────────────────────── */
 $('appVer').textContent = 'v' + (self.APP_VERSION || '');
+$('barVer').textContent = 'v' + (self.APP_VERSION || '');
 
 /* ─── Theme (light / dark, user-selectable) ───────────── */
 const THEME_KEY = 'infucalc-theme';
@@ -49,6 +50,12 @@ function setState(card, msgEl, state, msg) {
   }
 }
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// Preset text marks cautions with an emoji; render a drawn icon instead (text unchanged).
+function ketHtml(ket) {
+  const warn = /^\s*⚠️?\s*/.test(ket);
+  const body = esc(ket.replace(/^\s*⚠️?\s*/, ''));
+  return warn ? `<svg class="ic" aria-label="Perhatian" role="img"><use href="#i-alert"/></svg>${body}` : body;
+}
 function rows(list) {
   return list.map(r => `<div${r.tot ? ' class="tot"' : ''}><dt>${esc(r.k)}</dt><dd>${esc(r.v)}</dd></div>`).join('');
 }
@@ -117,7 +124,7 @@ $('presetSel').addEventListener('change', () => {
     const st = STATUS[s.status] || STATUS.INFO;
     return `<li class="sed">
       <div class="sed-top"><span class="sed-b">${esc(s.bentuk)}</span><span class="st ${st.cls}">${st.label}</span></div>
-      <span class="sed-k">${esc(s.ket)}</span>
+      <span class="sed-k">${ketHtml(s.ket)}</span>
     </li>`;
   }).join('');
   $('pInfo').hidden = false;
